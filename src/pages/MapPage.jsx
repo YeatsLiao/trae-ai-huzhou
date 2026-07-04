@@ -1,20 +1,74 @@
 import { useState } from 'react';
-import { MapPin, Filter, ChevronRight } from 'lucide-react';
+import { MapPin, Filter, ChevronRight, MessageCircle, Users } from 'lucide-react';
 import EmotionIcon from '../components/EmotionIcon';
-import { cityData, emotionTypes } from '../data/mockData';
+import { cityData, provinceData, emotionTypes, generateCityRecords } from '../data/mockData';
 
 function ChinaMap({ cities, onCitySelect, selectedCity }) {
-  const mapPoints = {
+  const allPoints = {
     beijing: { x: 55, y: 22 },
+    tianjin: { x: 58, y: 24 },
+    hebei: { x: 56, y: 26 },
+    shanxi: { x: 50, y: 28 },
+    neimenggu: { x: 42, y: 18 },
+    liaoning: { x: 68, y: 18 },
+    jilin: { x: 65, y: 12 },
+    heilongjiang: { x: 62, y: 8 },
     shanghai: { x: 78, y: 38 },
-    guangzhou: { x: 72, y: 65 },
-    shenzhen: { x: 74, y: 68 },
-    chengdu: { x: 35, y: 50 },
-    hangzhou: { x: 75, y: 35 },
-    wuhan: { x: 58, y: 48 },
-    xian: { x: 42, y: 35 },
-    nanjing: { x: 68, y: 33 },
-    chongqing: { x: 40, y: 55 },
+    jiangsu: { x: 72, y: 34 },
+    zhejiang: { x: 78, y: 34 },
+    anhui: { x: 66, y: 36 },
+    fujian: { x: 82, y: 44 },
+    jiangxi: { x: 70, y: 44 },
+    shandong: { x: 64, y: 30 },
+    henan: { x: 60, y: 34 },
+    hubei: { x: 62, y: 42 },
+    hunan: { x: 66, y: 48 },
+    guangdong: { x: 76, y: 58 },
+    guangxi: { x: 70, y: 56 },
+    hainan: { x: 82, y: 70 },
+    chongqing: { x: 48, y: 50 },
+    sichuan: { x: 38, y: 48 },
+    guizhou: { x: 56, y: 52 },
+    yunnan: { x: 46, y: 58 },
+    xizang: { x: 28, y: 42 },
+    shaanxi: { x: 44, y: 32 },
+    gansu: { x: 32, y: 32 },
+    qinghai: { x: 30, y: 40 },
+    ningxia: { x: 36, y: 28 },
+    xinjiang: { x: 12, y: 22 },
+    suzhou: { x: 74, y: 35 },
+    hangzhou: { x: 76, y: 33 },
+    shenzhen: { x: 74, y: 62 },
+    chengdu: { x: 35, y: 48 },
+    wuhan: { x: 62, y: 44 },
+    xian: { x: 44, y: 32 },
+    nanjing: { x: 70, y: 34 },
+    changsha: { x: 66, y: 50 },
+    qingdao: { x: 68, y: 28 },
+    dalian: { x: 70, y: 16 },
+    shenyang: { x: 66, y: 18 },
+    harbin: { x: 62, y: 6 },
+    kunming: { x: 46, y: 56 },
+    fuzhou: { x: 82, y: 46 },
+    jinan: { x: 66, y: 28 },
+    zhengzhou: { x: 62, y: 34 },
+    changchun: { x: 64, y: 10 },
+    nanning: { x: 72, y: 56 },
+    guiyang: { x: 56, y: 54 },
+    lanzhou: { x: 32, y: 30 },
+    tianjin: { x: 58, y: 24 },
+    dongguan: { x: 76, y: 60 },
+    wuxi: { x: 72, y: 35 },
+    haerbin: { x: 80, y: 68 },
+    xining: { x: 30, y: 38 },
+    yinchuan: { x: 36, y: 26 },
+    urumqi: { x: 12, y: 22 },
+    shijiazhuang: { x: 56, y: 26 },
+    hefei: { x: 66, y: 36 },
+    nanchang: { x: 70, y: 46 },
+    taiyuan: { x: 50, y: 28 },
+    wenzhou: { x: 78, y: 42 },
+    ningbo: { x: 78, y: 38 },
   };
   
   return (
@@ -37,10 +91,24 @@ function ChinaMap({ cities, onCitySelect, selectedCity }) {
           strokeOpacity="0.5"
         />
         
+        <path
+          d="M10,25 Q15,20 20,25 L20,35 Q15,38 10,35 Z"
+          fill="url(#mapGradient)"
+          stroke="#38bdf8"
+          strokeWidth="0.3"
+          strokeOpacity="0.3"
+        />
+        
+        <path
+          d="M20,15 Q25,10 30,15 L30,25 Q25,28 20,25 Z"
+          fill="url(#mapGradient)"
+          stroke="#38bdf8"
+          strokeWidth="0.3"
+          strokeOpacity="0.3"
+        />
+        
         {cities.map((city) => {
-          const point = mapPoints[city.id];
-          if (!point) return null;
-          
+          const point = allPoints[city.id] || { x: 50, y: 40 };
           const emotion = emotionTypes.find(e => e.id === city.emotion);
           const isSelected = selectedCity?.id === city.id;
           
@@ -50,20 +118,20 @@ function ChinaMap({ cities, onCitySelect, selectedCity }) {
                 <circle
                   cx={point.x}
                   cy={point.y}
-                  r="4"
+                  r="5"
                   fill={emotion?.color}
-                  opacity="0.3"
+                  opacity="0.2"
                   className="animate-ping"
                 />
               )}
               <circle
                 cx={point.x}
                 cy={point.y}
-                r={isSelected ? "2.5" : "2"}
+                r={isSelected ? "3" : "2"}
                 fill={emotion?.color}
                 className="transition-all duration-300 cursor-pointer"
                 style={{ 
-                  filter: `drop-shadow(0 0 ${isSelected ? '8px' : '4px'} ${emotion?.color})` 
+                  filter: `drop-shadow(0 0 ${isSelected ? '10px' : '5px'} ${emotion?.color})` 
                 }}
               />
               <circle
@@ -79,7 +147,7 @@ function ChinaMap({ cities, onCitySelect, selectedCity }) {
       
       <div className="absolute bottom-4 left-4 right-4 flex justify-center">
         <div className="bg-bg-secondary/90 backdrop-blur-md rounded-xl px-4 py-2 flex items-center gap-4">
-          {emotionTypes.slice(0, 4).map((emotion) => (
+          {emotionTypes.map((emotion) => (
             <div key={emotion.id} className="flex items-center gap-1">
               <span 
                 className="w-3 h-3 rounded-full"
@@ -94,18 +162,70 @@ function ChinaMap({ cities, onCitySelect, selectedCity }) {
   );
 }
 
+function CityRecords({ records }) {
+  return (
+    <div className="mt-4">
+      <div className="flex items-center gap-2 mb-3">
+        <MessageCircle className="w-4 h-4 text-purple" />
+        <span className="text-sm font-medium text-text-primary">实时留言</span>
+      </div>
+      <div className="space-y-3">
+        {records.slice(0, 5).map((record) => (
+          <div 
+            key={record.id} 
+            className="p-3 bg-bg-tertiary/30 rounded-xl flex items-start gap-3"
+          >
+            <div 
+              className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0"
+              style={{ backgroundColor: `${record.emotion.color}20` }}
+            >
+              <EmotionIcon emotion={record.emotion} size="sm" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-text-primary truncate">{record.note}</p>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs text-text-tertiary">{record.time}</span>
+                <div 
+                  className="flex-1 h-1 bg-bg-tertiary rounded-full overflow-hidden"
+                >
+                  <div 
+                    className="h-full rounded-full"
+                    style={{ 
+                      width: `${record.intensity}%`,
+                      backgroundColor: record.emotion.color
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function MapPage() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [filterEmotion, setFilterEmotion] = useState('all');
+  const [cityRecords, setCityRecords] = useState([]);
   
   const filteredCities = filterEmotion === 'all' 
     ? cityData 
     : cityData.filter(c => c.emotion === filterEmotion);
   
+  const handleCitySelect = (city) => {
+    setSelectedCity(city);
+    setCityRecords(generateCityRecords(city.id));
+  };
+  
   return (
     <div className="min-h-screen pb-24 pt-20 px-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-bold text-text-primary">城市情绪地图</h2>
+        <div>
+          <h2 className="text-xl font-bold text-text-primary">城市情绪地图</h2>
+          <p className="text-sm text-text-secondary mt-1">覆盖 {cityData.length} 座城市</p>
+        </div>
         <button className="flex items-center gap-2 px-4 py-2 bg-bg-card/50 backdrop-blur-lg rounded-xl border border-border hover:bg-bg-card transition-colors">
           <Filter className="w-4 h-4 text-text-secondary" />
           <span className="text-sm text-text-secondary">筛选</span>
@@ -123,7 +243,7 @@ export default function MapPage() {
         >
           全部
         </button>
-        {emotionTypes.slice(0, 4).map((emotion) => (
+        {emotionTypes.map((emotion) => (
           <button
             key={emotion.id}
             onClick={() => setFilterEmotion(emotion.id)}
@@ -144,7 +264,7 @@ export default function MapPage() {
       
       <ChinaMap 
         cities={filteredCities} 
-        onCitySelect={setSelectedCity}
+        onCitySelect={handleCitySelect}
         selectedCity={selectedCity}
       />
       
@@ -178,12 +298,18 @@ export default function MapPage() {
           
           <div className="flex gap-4 mb-4">
             <div className="flex-1 bg-bg-tertiary/50 rounded-xl p-3">
-              <p className="text-xs text-text-tertiary mb-1">参与人数</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Users className="w-3 h-3 text-sky" />
+                <span className="text-xs text-text-tertiary">参与人数</span>
+              </div>
               <p className="text-lg font-bold text-text-primary">{selectedCity.count}</p>
             </div>
             <div className="flex-1 bg-bg-tertiary/50 rounded-xl p-3">
-              <p className="text-xs text-text-tertiary mb-1">活跃指数</p>
-              <p className="text-lg font-bold text-text-primary">{Math.floor(selectedCity.count / 50)}</p>
+              <div className="flex items-center gap-2 mb-1">
+                <MessageCircle className="w-3 h-3 text-purple" />
+                <span className="text-xs text-text-tertiary">留言数</span>
+              </div>
+              <p className="text-lg font-bold text-text-primary">{Math.floor(selectedCity.count * 0.6)}</p>
             </div>
           </div>
           
@@ -210,19 +336,21 @@ export default function MapPage() {
               })}
             </div>
           </div>
+          
+          <CityRecords records={cityRecords} />
         </div>
       )}
       
       <div className="mt-6">
         <h3 className="text-lg font-semibold text-text-primary mb-3">热门城市</h3>
-        <div className="space-y-3">
-          {cityData.slice(0, 5).map((city) => {
+        <div className="grid grid-cols-2 gap-3">
+          {cityData.slice(0, 8).map((city) => {
             const emotion = emotionTypes.find(e => e.id === city.emotion);
             return (
               <button
                 key={city.id}
-                onClick={() => setSelectedCity(city)}
-                className={`w-full flex items-center gap-4 p-4 rounded-xl transition-all duration-300 ${
+                onClick={() => handleCitySelect(city)}
+                className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 ${
                   selectedCity?.id === city.id 
                     ? 'bg-bg-card-hover ring-2' 
                     : 'bg-bg-card/50 hover:bg-bg-card'
@@ -242,10 +370,9 @@ export default function MapPage() {
                   <MapPin className="w-5 h-5" style={{ color: emotion?.color }} />
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="font-semibold text-text-primary">{city.name}</p>
-                  <p className="text-sm text-text-tertiary">{city.count} 人参与</p>
+                  <p className="font-semibold text-text-primary text-sm">{city.name}</p>
+                  <p className="text-xs text-text-tertiary">{city.count} 人</p>
                 </div>
-                <EmotionIcon emotion={emotion} size="md" />
               </button>
             );
           })}

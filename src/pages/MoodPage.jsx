@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Send, Sparkles, Heart, Star, Cloud } from 'lucide-react';
+import { Send, Sparkles, Heart, Star, Cloud, MessageCircle } from 'lucide-react';
 import EmotionCard from '../components/EmotionCard';
-import { emotionTypes } from '../data/mockData';
+import { emotionTypes, emotionNotes } from '../data/mockData';
 
 function IntensitySlider({ value, onChange, emotion }) {
   return (
@@ -55,6 +55,8 @@ function MoodDetail({ emotion, onBack }) {
     }, 1000);
   };
   
+  const presetNotes = emotionNotes[emotion.id] || [];
+  
   return (
     <div className="min-h-screen pb-24 pt-20 px-4 animate-in fade-in slide-in-from-right-4 duration-300">
       <div className="flex items-center gap-3 mb-6">
@@ -91,7 +93,10 @@ function MoodDetail({ emotion, onBack }) {
       <IntensitySlider value={intensity} onChange={setIntensity} emotion={emotion} />
       
       <div className="mt-6">
-        <label className="text-sm text-text-secondary mb-2 block">备注（可选）</label>
+        <div className="flex items-center gap-2 mb-2">
+          <MessageCircle className="w-4 h-4 text-purple" />
+          <label className="text-sm text-text-secondary">留言（可选）</label>
+        </div>
         <textarea
           value={note}
           onChange={(e) => setNote(e.target.value)}
@@ -100,17 +105,22 @@ function MoodDetail({ emotion, onBack }) {
         />
       </div>
       
-      <div className="mt-6 flex gap-2">
-        {['开心', '放松', '疲惫', '焦虑'].map((tag) => (
-          <button
-            key={tag}
-            onClick={() => setNote(tag)}
-            className="px-4 py-2 rounded-full bg-bg-tertiary/50 text-sm text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors"
-          >
-            {tag}
-          </button>
-        ))}
-      </div>
+      {presetNotes.length > 0 && (
+        <div className="mt-6">
+          <p className="text-xs text-text-tertiary mb-3">快速选择：</p>
+          <div className="flex flex-wrap gap-2">
+            {presetNotes.slice(0, 6).map((presetNote, index) => (
+              <button
+                key={index}
+                onClick={() => setNote(presetNote)}
+                className="px-4 py-2 rounded-full bg-bg-tertiary/50 text-sm text-text-secondary hover:bg-bg-tertiary hover:text-text-primary transition-colors"
+              >
+                {presetNote}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
       
       <div className="fixed bottom-24 left-4 right-4">
         <button
