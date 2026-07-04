@@ -1,39 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as echarts from 'echarts';
-
-const provinceEmotionData = [
-  { name: '北京', value: 78, emotion: 'calm', emotionName: '平静' },
-  { name: '天津', value: 72, emotion: 'calm', emotionName: '平静' },
-  { name: '河北', value: 65, emotion: 'anxious', emotionName: '焦虑' },
-  { name: '山西', value: 68, emotion: 'tired', emotionName: '疲惫' },
-  { name: '内蒙古', value: 75, emotion: 'calm', emotionName: '平静' },
-  { name: '辽宁', value: 62, emotion: 'sad', emotionName: '悲伤' },
-  { name: '吉林', value: 60, emotion: 'sad', emotionName: '悲伤' },
-  { name: '黑龙江', value: 58, emotion: 'sad', emotionName: '悲伤' },
-  { name: '上海', value: 85, emotion: 'energetic', emotionName: '活力' },
-  { name: '江苏', value: 82, emotion: 'happy', emotionName: '开心' },
-  { name: '浙江', value: 84, emotion: 'happy', emotionName: '开心' },
-  { name: '安徽', value: 70, emotion: 'calm', emotionName: '平静' },
-  { name: '福建', value: 78, emotion: 'happy', emotionName: '开心' },
-  { name: '江西', value: 66, emotion: 'anxious', emotionName: '焦虑' },
-  { name: '山东', value: 76, emotion: 'happy', emotionName: '开心' },
-  { name: '河南', value: 64, emotion: 'anxious', emotionName: '焦虑' },
-  { name: '湖北', value: 74, emotion: 'calm', emotionName: '平静' },
-  { name: '湖南', value: 77, emotion: 'happy', emotionName: '开心' },
-  { name: '广东', value: 88, emotion: 'energetic', emotionName: '活力' },
-  { name: '广西', value: 75, emotion: 'happy', emotionName: '开心' },
-  { name: '海南', value: 86, emotion: 'happy', emotionName: '开心' },
-  { name: '重庆', value: 68, emotion: 'angry', emotionName: '愤怒' },
-  { name: '四川', value: 79, emotion: 'calm', emotionName: '平静' },
-  { name: '贵州', value: 72, emotion: 'calm', emotionName: '平静' },
-  { name: '云南', value: 80, emotion: 'happy', emotionName: '开心' },
-  { name: '西藏', value: 76, emotion: 'calm', emotionName: '平静' },
-  { name: '陕西', value: 65, emotion: 'tired', emotionName: '疲惫' },
-  { name: '甘肃', value: 62, emotion: 'lost', emotionName: '迷茫' },
-  { name: '青海', value: 70, emotion: 'calm', emotionName: '平静' },
-  { name: '宁夏', value: 68, emotion: 'calm', emotionName: '平静' },
-  { name: '新疆', value: 64, emotion: 'tired', emotionName: '疲惫' },
-];
+import { Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { provinceEmotionData } from '../data/mockData';
 
 const emotionColors = {
   happy: '#fbbf24',
@@ -49,24 +17,48 @@ const emotionColors = {
 export default function ChinaMapChart({ onProvinceSelect, selectedProvince, theme }) {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
 
   useEffect(() => {
     if (!chartRef.current) return;
 
-    chartInstance.current = echarts.init(chartRef.current);
-
-    const fetchMapData = async () => {
+    let isMounted = true;
+    
+    const initChart = async () => {
+      setLoading(true);
+      setError(false);
+      
       try {
+        // 使用一个更稳定的 GeoJSON 源，或者添加重试逻辑
         const response = await fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json');
+        if (!response.ok) throw new Error('Network response was not ok');
+        
         const mapData = await response.json();
+        
+        if (!isMounted) return;
+        
         echarts.registerMap('china', mapData);
+        
+        if (!chartInstance.current) {
+          chartInstance.current = echarts.init(chartRef.current);
+        }
+        
         renderChart();
+        setLoading(false);
       } catch (error) {
         console.error('Failed to load map data:', error);
+        if (isMounted) {
+          setError(true);
+          setLoading(false);
+        }
       }
     };
 
     const renderChart = () => {
+      if (!chartInstance.current) return;
+      
       const lightTheme = theme === 'light';
       
       const option = {
@@ -76,6 +68,7 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
           backgroundColor: lightTheme ? 'rgba(255, 255, 255, 0.95)' : 'rgba(17, 24, 39, 0.95)',
           borderColor: lightTheme ? '#e5e7eb' : 'rgba(148, 163, 184, 0.2)',
           borderWidth: 1,
+          padding: 0,
           textStyle: {
             color: lightTheme ? '#111827' : '#f1f5f9',
           },
@@ -83,10 +76,13 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
             const data = provinceEmotionData.find(d => d.name === params.name);
             if (!data) return params.name;
             return `
-              <div style="padding: 8px;">
-                <div style="font-weight: 600; margin-bottom: 4px;">${params.name}</div>
-                <div style="color: ${emotionColors[data.emotion]}; margin-bottom: 4px;">当前情绪: ${data.emotionName}</div>
-                <div>情绪指数: ${data.value}</div>
+              <div style="padding: 12px; border-radius: 12px;">
+                <div style="font-weight: 700; font-size: 14px; margin-bottom: 6px; color: ${lightTheme ? '#111827' : '#f1f5f9'}">${params.name}</div>
+                <div style="display: flex; items-center; gap: 6px; margin-bottom: 4px;">
+                  <span style="color: ${emotionColors[data.emotion]}">●</span>
+                  <span style="color: ${lightTheme ? '#4b5563' : '#94a3b8'}">当前情绪: ${data.emotionName}</span>
+                </div>
+                <div style="color: ${lightTheme ? '#6b7280' : '#64748b'}; font-size: 12px;">情绪指数: ${data.value}</div>
               </div>
             `;
           },
@@ -94,50 +90,50 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
         visualMap: {
           min: 50,
           max: 90,
-          left: 'left',
-          top: 'bottom',
+          left: 20,
+          bottom: 20,
           text: ['高', '低'],
           textStyle: {
             color: lightTheme ? '#6b7280' : '#94a3b8',
+            fontSize: 10
           },
           inRange: {
             color: ['#dbeafe', '#93c5fd', '#3b82f6', '#1d4ed8', '#7c3aed', '#f472b6', '#ef4444'],
           },
           show: true,
-          itemWidth: 12,
-          itemHeight: 100,
-          borderColor: lightTheme ? '#e5e7eb' : 'rgba(148, 163, 184, 0.2)',
+          itemWidth: 10,
+          itemHeight: 80,
         },
         series: [
           {
             name: '情绪指数',
             type: 'map',
             map: 'china',
-            roam: true,
+            roam: false, // 移动端建议禁用 roam 以免冲突
             zoom: 1.2,
             center: [104, 36],
             label: {
               show: true,
-              fontSize: 11,
-              color: lightTheme ? '#374151' : '#cbd5e1',
+              fontSize: 9,
+              color: lightTheme ? '#4b5563' : '#94a3b8',
             },
             emphasis: {
               label: {
                 show: true,
-                fontSize: 14,
+                fontSize: 12,
                 fontWeight: 'bold',
                 color: lightTheme ? '#111827' : '#ffffff',
               },
               itemStyle: {
                 areaColor: '#38bdf8',
-                shadowBlur: 10,
-                shadowColor: 'rgba(56, 189, 248, 0.5)',
+                shadowBlur: 15,
+                shadowColor: 'rgba(56, 189, 248, 0.4)',
               },
             },
             itemStyle: {
               areaColor: lightTheme ? '#f3f4f6' : '#1a1f35',
-              borderColor: lightTheme ? '#d1d5db' : 'rgba(148, 163, 184, 0.2)',
-              borderWidth: 1,
+              borderColor: lightTheme ? '#ffffff' : 'rgba(255, 255, 255, 0.1)',
+              borderWidth: 0.5,
             },
             data: provinceEmotionData.map(item => ({
               name: item.name,
@@ -152,6 +148,7 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
 
       chartInstance.current.setOption(option);
 
+      chartInstance.current.off('click');
       chartInstance.current.on('click', (params) => {
         if (params.name && onProvinceSelect) {
           const data = provinceEmotionData.find(d => d.name === params.name);
@@ -162,7 +159,7 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
       });
     };
 
-    fetchMapData();
+    initChart();
 
     const handleResize = () => {
       chartInstance.current?.resize();
@@ -170,22 +167,55 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
     window.addEventListener('resize', handleResize);
 
     return () => {
+      isMounted = false;
       window.removeEventListener('resize', handleResize);
       chartInstance.current?.dispose();
+      chartInstance.current = null;
     };
-  }, [onProvinceSelect, selectedProvince, theme]);
+  }, [onProvinceSelect, theme, retryCount]);
+
+  useEffect(() => {
+    if (chartInstance.current) {
+      // 当选中省份变化时，更新地图高亮
+      // 这里可以根据需要添加逻辑
+    }
+  }, [selectedProvince]);
 
   return (
-    <div 
-      ref={chartRef} 
-      className="w-full aspect-[4/3] bg-bg-card/50 backdrop-blur-lg rounded-2xl border border-border overflow-hidden"
-    />
+    <div className="relative w-full aspect-[4/3] bg-bg-card/50 backdrop-blur-lg rounded-2xl border border-border overflow-hidden shadow-card">
+      {loading && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-bg-card/40 backdrop-blur-sm">
+          <Loader2 className="w-8 h-8 text-sky animate-spin mb-3" />
+          <p className="text-sm text-text-secondary font-medium">正在加载地图数据...</p>
+        </div>
+      )}
+      
+      {error && (
+        <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-bg-card/60 backdrop-blur-md px-6 text-center">
+          <AlertCircle className="w-10 h-10 text-pink mb-3" />
+          <p className="text-base font-bold text-text-primary mb-2">地图加载失败</p>
+          <p className="text-xs text-text-tertiary mb-4">可能是网络连接问题，请尝试重新加载</p>
+          <button 
+            onClick={() => setRetryCount(c => c + 1)}
+            className="flex items-center gap-2 px-4 py-2 bg-sky text-white rounded-xl text-sm font-bold shadow-lg hover:bg-sky/90 transition-all active:scale-95"
+          >
+            <RefreshCw className="w-4 h-4" />
+            重试加载
+          </button>
+        </div>
+      )}
+      
+      <div 
+        ref={chartRef} 
+        className="w-full h-full"
+      />
+    </div>
   );
 }
 
 function getEmotionColor(emotion, value) {
   const baseColor = emotionColors[emotion] || '#9ca3af';
-  const opacity = 0.3 + (value - 50) / 100 * 0.7;
+  const opacity = 0.4 + (value - 50) / 100 * 0.6;
   return hexToRgba(baseColor, opacity);
 }
 
@@ -197,3 +227,4 @@ function hexToRgba(hex, opacity) {
 }
 
 export { provinceEmotionData };
+

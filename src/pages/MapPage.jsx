@@ -221,14 +221,14 @@ export default function MapPage() {
                 <Users className="w-3 h-3 text-sky" />
                 <span className="text-xs text-text-tertiary">参与人数</span>
               </div>
-              <p className="text-lg font-bold text-text-primary">{Math.floor(Math.random() * 5000) + 1000}</p>
+              <p className="text-lg font-bold text-text-primary">{selectedProvince.userCount?.toLocaleString() || (Math.floor(Math.random() * 5000) + 1000).toLocaleString()}</p>
             </div>
             <div className="flex-1 bg-bg-tertiary/50 rounded-xl p-3">
               <div className="flex items-center gap-2 mb-1">
                 <MessageCircle className="w-3 h-3 text-purple" />
                 <span className="text-xs text-text-tertiary">留言数</span>
               </div>
-              <p className="text-lg font-bold text-text-primary">{Math.floor(Math.random() * 3000) + 500}</p>
+              <p className="text-lg font-bold text-text-primary">{selectedProvince.messageCount?.toLocaleString() || (Math.floor(Math.random() * 3000) + 500).toLocaleString()}</p>
             </div>
           </div>
           

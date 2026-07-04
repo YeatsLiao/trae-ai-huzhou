@@ -34,7 +34,15 @@ export default function App() {
   const renderPage = () => {
     switch (activeTab) {
       case 'home':
-        return <HomePage onOpenMood={handleOpenMood} />;
+        return (
+          <HomePage 
+            onOpenMood={handleOpenMood} 
+            onSelectEmotion={(emotion) => {
+              setSelectedEmotion(emotion);
+              setActiveTab('mood');
+            }}
+          />
+        );
       case 'map':
         return <MapPage />;
       case 'trend':
