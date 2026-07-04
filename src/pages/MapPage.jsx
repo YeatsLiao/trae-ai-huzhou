@@ -1,8 +1,8 @@
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { MapPin, Filter, ChevronRight, MessageCircle, Users } from 'lucide-react';
 import EmotionIcon from '../components/EmotionIcon';
 import ChinaMapChart, { provinceEmotionData } from '../components/ChinaMapChart';
-import ThemeContext from '../context/ThemeContext';
+import { useTheme } from '../context/ThemeContext';
 import { emotionTypes, emotionNotes, cityData, generateCityRecords } from '../data/mockData';
 
 function ProvinceRecords({ records }) {
@@ -113,7 +113,7 @@ function generateProvinceRecords(provinceName) {
 }
 
 export default function MapPage() {
-  const { theme } = useContext(ThemeContext);
+  const { theme } = useTheme();
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [filterEmotion, setFilterEmotion] = useState('all');
   const [provinceRecords, setProvinceRecords] = useState([]);
