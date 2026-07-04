@@ -109,7 +109,7 @@ export default function ChinaMapChart({ onProvinceSelect, selectedProvince, them
             name: '情绪指数',
             type: 'map',
             map: 'china',
-            roam: false, // 移动端建议禁用 roam 以免冲突
+            roam: true,
             zoom: 1.2,
             center: [104, 36],
             label: {
