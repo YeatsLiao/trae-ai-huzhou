@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪天空 - 选择心情</title>
+    <style id="theme-vars">
+:root {
+  /* ===== Brand Colors ===== */
+  --color-bg-primary: #0a0e1a;
+  --color-bg-secondary: #111827;
+  --color-bg-tertiary: #1a1f35;
+  --color-bg-card: rgba(17, 24, 39, 0.85);
+  --color-bg-card-hover: rgba(26, 31, 53, 0.95);
+
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-text-inverse: #0a0e1a;
+
+  /* Accent Colors */
+  --color-sky: #38bdf8;
+  --color-purple: #a78bfa;
+  --color-pink: #f472b6;
+
+  /* Emotion Colors */
+  --color-emotion-happy: #fbbf24;
+  --color-emotion-calm: #38bdf8;
+  --color-emotion-anxious: #9ca3af;
+  --color-emotion-sad: #7c3aed;
+  --color-emotion-angry: #ef4444;
+  --color-emotion-lost: #e2e8f0;
+  --color-emotion-tired: #f97316;
+  --color-emotion-energetic: #22d3ee;
+
+  /* Glow & Effects */
+  --glow-happy: 0 0 20px rgba(251, 191, 36, 0.5);
+  --glow-calm: 0 0 20px rgba(56, 189, 248, 0.5);
+  --glow-anxious: 0 0 20px rgba(156, 163, 175, 0.4);
+  --glow-sad: 0 0 20px rgba(124, 58, 237, 0.5);
+  --glow-angry: 0 0 20px rgba(239, 68, 68, 0.5);
+  --glow-lost: 0 0 20px rgba(226, 232, 240, 0.4);
+  --glow-tired: 0 0 20px rgba(249, 115, 22, 0.5);
+  --glow-energetic: 0 0 20px rgba(34, 211, 238, 0.5);
+
+  /* Semantic */
+  --color-border: rgba(148, 163, 184, 0.15);
+  --color-border-active: rgba(56, 189, 248, 0.4);
+
+  /* ===== Typography ===== */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+  --text-xs: 0.625rem;    /* 10px */
+  --text-sm: 0.75rem;     /* 12px */
+  --text-base: 0.875rem;  /* 14px */
+  --text-lg: 1rem;        /* 16px */
+  --text-xl: 1.125rem;    /* 18px */
+  --text-2xl: 1.25rem;    /* 20px */
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== Spacing ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ===== Radius ===== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ===== Shadows ===== */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Typography Classes ===== */
+.brand-heading {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+}
+
+.brand-subheading {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+}
+
+.brand-body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+}
+
+.brand-caption {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-tertiary);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-bg-primary);
+    --color-foreground: var(--color-text-primary);
+    --color-card: var(--color-bg-card);
+    --color-primary: var(--color-sky);
+    --color-primary-foreground: var(--color-text-inverse);
+    --color-secondary: var(--color-bg-secondary);
+    --color-muted: var(--color-bg-tertiary);
+    --color-muted-foreground: var(--color-text-secondary);
+    --color-accent: var(--color-purple);
+    --color-border: var(--color-border);
+    --color-ring: var(--color-sky);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+  }
+  @layer base {
+    body { background: var(--color-bg-primary); color: var(--color-text-primary); }
+    td, th { @apply break-words; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="relative min-h-[812px] max-w-[375px] mx-auto overflow-hidden" style="font-family: var(--font-family);">
+
+      <!-- Blurred Sky Background -->
+      <div class="absolute inset-0 z-0">
+        <img src="../assets/image_0_yi19x4.jpg" alt="" class="w-full h-full object-cover" style="filter: blur(12px) brightness(0.5);">
+        <div class="absolute inset-0" style="background: rgba(10, 14, 26, 0.7);"></div>
+      </div>
+
+      <!-- Page Content -->
+      <div class="relative z-10 flex flex-col min-h-[812px]">
+
+        <!-- Header -->
+        <header class="flex items-center justify-center py-3 px-4 shrink-0" style="background: rgba(10, 14, 26, 0.4); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
+          <button data-dom-id="btn-back-home" class="absolute left-4 inline-flex items-center justify-center w-10 h-10" aria-label="关闭" style="color: var(--color-text-primary);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
+          <h1 class="text-base font-semibold" style="color: var(--color-text-primary); font-size: var(--text-lg); font-weight: var(--font-weight-bold); text-wrap: balance; word-break: keep-all;">选择你的心情</h1>
+        </header>
+
+        <!-- Scrollable Card Grid Area -->
+        <div class="flex-1 overflow-y-auto px-4 pt-4 pb-4">
+
+          <!-- Emotion Cards Grid: 2 columns x 4 rows -->
+          <div class="grid grid-cols-2 gap-3">
+
+            <!-- 1. 开心 (Happy) - SELECTED by default -->
+            <div class="emotion-card selected relative flex flex-col cursor-pointer" data-emotion="happy" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1.5px solid var(--color-emotion-happy); border-radius: var(--radius-lg); box-shadow: var(--glow-happy); transform: scale(1.03); opacity: 1; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <!-- Checkmark -->
+              <div class="absolute top-2 right-2 w-5 h-5 rounded-full flex items-center justify-center" style="background: var(--color-emotion-happy);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#0a0e1a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </div>
+              <!-- Weather Mini Scene -->
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #fbbf24, #f59e0b);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg class="sun-rotate" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fffbe6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation: sunRotate 12s linear infinite;">
+                    <circle cx="12" cy="12" r="4"></circle>
+                    <line x1="12" y1="2" x2="12" y2="4"></line>
+                    <line x1="12" y1="20" x2="12" y2="22"></line>
+                    <line x1="4.93" y1="4.93" x2="6.34" y2="6.34"></line>
+                    <line x1="17.66" y1="17.66" x2="19.07" y2="19.07"></line>
+                    <line x1="2" y1="12" x2="4" y2="12"></line>
+                    <line x1="20" y1="12" x2="22" y2="12"></line>
+                    <line x1="4.93" y1="19.07" x2="6.34" y2="17.66"></line>
+                    <line x1="17.66" y1="6.34" x2="19.07" y2="4.93"></line>
+                  </svg>
+                </div>
+              </div>
+              <!-- Icon + Text -->
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(251, 191, 36, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">开心</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">今天充满阳光</span>
+              </div>
+            </div>
+
+            <!-- 2. 平静 (Calm) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="calm" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <!-- Weather Mini Scene -->
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #38bdf8, #0ea5e9);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e0f2fe" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"></path></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(56, 189, 248, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">平静</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">心如止水</span>
+              </div>
+            </div>
+
+            <!-- 3. 焦虑 (Anxious) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="anxious" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #9ca3af, #6b7280);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg class="rain-drops" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="7" x2="8" y2="11"></line><line x1="12" y1="5" x2="12" y2="13"></line><line x1="16" y1="7" x2="16" y2="11"></line></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(156, 163, 175, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">焦虑</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">乌云密布</span>
+              </div>
+            </div>
+
+            <!-- 4. 悲伤 (Sad) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="sad" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #7c3aed, #6d28d9);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e9d5ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"></path><line x1="8" y1="19" x2="8" y2="21"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="16" y1="19" x2="16" y2="21"></line></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(124, 58, 237, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9.05"></line><line x1="15" y1="9" x2="15.01" y2="9.05"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">悲伤</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">细雨绵绵</span>
+              </div>
+            </div>
+
+            <!-- 5. 愤怒 (Angry) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="angry" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #ef4444, #dc2626);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg class="lightning-flash" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fecaca" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="animation: lightningFlash 3s ease-in-out infinite;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(239, 68, 68, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9.05"></line><line x1="15" y1="9" x2="15.01" y2="9.05"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">愤怒</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">雷声轰鸣</span>
+              </div>
+            </div>
+
+            <!-- 6. 迷茫 (Lost) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="lost" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #e2e8f0, #cbd5e1);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"></path><path d="M6 18h12"></path><path d="M2 18h2"></path><path d="M20 18h2"></path><path d="M12 22v-4"></path><circle cx="12" cy="12" r="4" stroke-dasharray="2 2"></circle></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(226, 232, 240, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#e2e8f0" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">迷茫</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">雾气弥漫</span>
+              </div>
+            </div>
+
+            <!-- 7. 疲惫 (Tired) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="tired" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #f97316, #ea580c);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff7ed" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10a6 6 0 0 0 0 12h4a6 6 0 0 0 0-12h-4z" fill="none"></path><line x1="12" y1="2" x2="12" y2="6"></line><line x1="5" y1="10" x2="7" y2="12"></line><line x1="19" y1="10" x2="17" y2="12"></line></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(249, 115, 22, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f97316" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><line x1="9" y1="9" x2="9.01" y2="9.05"></line><line x1="15" y1="9" x2="15.01" y2="9.05"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">疲惫</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">夕阳西沉</span>
+              </div>
+            </div>
+
+            <!-- 8. 充满活力 (Energetic) -->
+            <div class="emotion-card relative flex flex-col cursor-pointer" data-emotion="energetic" style="background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid var(--color-border); border-radius: var(--radius-lg); opacity: 0.6; transition: transform 240ms cubic-bezier(.3,0,0,1), opacity 240ms cubic-bezier(.3,0,0,1), box-shadow 240ms cubic-bezier(.3,0,0,1), border-color 240ms cubic-bezier(.3,0,0,1);">
+              <div class="relative overflow-hidden shrink-0" style="height: 70px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; background: linear-gradient(180deg, #22d3ee, #06b6d4);">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ecfeff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                </div>
+              </div>
+              <div class="flex flex-col items-center py-2.5 px-2 flex-1">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center mb-1.5" style="background: rgba(34, 211, 238, 0.2);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                </div>
+                <span class="font-semibold" style="font-size: var(--text-sm); color: var(--color-text-primary);">充满活力</span>
+                <span class="mt-0.5" style="font-size: var(--text-xs); color: var(--color-text-tertiary);">星光闪烁</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Confirmation Area -->
+          <div class="mt-5 flex flex-col gap-3">
+            <!-- Optional text input -->
+            <input type="text" placeholder="添加一句话描述你的心情..." maxlength="100" class="w-full px-4 py-3 text-sm outline-none placeholder-opacity-50" style="background: var(--color-bg-tertiary); border: 1px solid var(--color-border); border-radius: var(--radius-full); color: var(--color-text-primary); font-size: var(--text-sm); font-family: var(--font-family);">
+
+            <!-- Confirm button -->
+            <button class="w-full py-3.5 font-medium text-base whitespace-nowrap flex items-center justify-center" style="background: linear-gradient(135deg, #38bdf8, #a78bfa); color: #ffffff; border-radius: var(--radius-lg); box-shadow: 0 0 24px rgba(56, 189, 248, 0.3); font-size: var(--text-base); font-family: var(--font-family); transition: transform 120ms cubic-bezier(.2,.8,.2,1), box-shadow 120ms cubic-bezier(.2,.8,.2,1);" onmouseenter="this.style.transform='translateY(-1px)';this.style.boxShadow='0 0 32px rgba(56,189,248,0.4)'" onmouseleave="this.style.transform='translateY(0)';this.style.boxShadow='0 0 24px rgba(56,189,248,0.3)'" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='translateY(0)'">
+              确认我的心情
+            </button>
+
+            <!-- Skip button -->
+            <div class="flex justify-center pt-1">
+              <button data-dom-id="btn-skip" class="text-sm whitespace-nowrap" style="color: var(--color-text-tertiary); font-size: var(--text-sm); font-family: var(--font-family); background: none; border: none; cursor: pointer; text-decoration: none; transition: color 120ms cubic-bezier(.2,.8,.2,1);" onmouseenter="this.style.textDecoration='underline';this.style.color='var(--color-text-secondary)'" onmouseleave="this.style.textDecoration='none';this.style.color='var(--color-text-tertiary)'">
+                跳过，只查看
+              </button>
+            </div>
+          </div>
+
+          <!-- Bottom safe area spacer -->
+          <div class="h-4"></div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Animations -->
+    <style>
+      @keyframes sunRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulseGlow {
+        0%, 100% { box-shadow: var(--glow-happy); }
+        50% { box-shadow: 0 0 30px rgba(251, 191, 36, 0.7); }
+      }
+      @keyframes lightningFlash {
+        0%, 90%, 100% { opacity: 1; }
+        92%, 96% { opacity: 0.2; }
+        94% { opacity: 1; }
+      }
+      @keyframes rainFall {
+        0% { transform: translateY(-2px); opacity: 0.6; }
+        50% { opacity: 1; }
+        100% { transform: translateY(3px); opacity: 0.4; }
+      }
+      .emotion-card.selected {
+        animation: pulseGlow 2.4s ease-in-out infinite;
+      }
+      .sun-rotate {
+        animation: sunRotate 12s linear infinite;
+      }
+      .lightning-flash {
+        animation: lightningFlash 3s ease-in-out infinite;
+      }
+      .rain-drops line {
+        animation: rainFall 1.2s ease-in-out infinite;
+      }
+      .rain-drops line:nth-child(1) { animation-delay: 0s; }
+      .rain-drops line:nth-child(2) { animation-delay: 0.3s; }
+      .rain-drops line:nth-child(3) { animation-delay: 0.6s; }
+      @media (prefers-reduced-motion: reduce) {
+        .emotion-card.selected { animation: none; }
+        .sun-rotate { animation: none; }
+        .lightning-flash { animation: none; }
+        .rain-drops line { animation: none; }
+        .emotion-card { transition-duration: 0.01ms !important; }
+      }
+    </style>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

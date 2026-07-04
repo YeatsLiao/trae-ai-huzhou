@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="light" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>情绪天空 - 城市情绪地图</title>
+    <style id="theme-vars">
+:root {
+  /* ===== Brand Colors ===== */
+  --color-bg-primary: #0a0e1a;
+  --color-bg-secondary: #111827;
+  --color-bg-tertiary: #1a1f35;
+  --color-bg-card: rgba(17, 24, 39, 0.85);
+  --color-bg-card-hover: rgba(26, 31, 53, 0.95);
+
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-text-tertiary: #64748b;
+  --color-text-inverse: #0a0e1a;
+
+  /* Accent Colors */
+  --color-sky: #38bdf8;
+  --color-purple: #a78bfa;
+  --color-pink: #f472b6;
+
+  /* Emotion Colors */
+  --color-emotion-happy: #fbbf24;
+  --color-emotion-calm: #38bdf8;
+  --color-emotion-anxious: #9ca3af;
+  --color-emotion-sad: #7c3aed;
+  --color-emotion-angry: #ef4444;
+  --color-emotion-lost: #e2e8f0;
+  --color-emotion-tired: #f97316;
+  --color-emotion-energetic: #22d3ee;
+
+  /* Glow & Effects */
+  --glow-happy: 0 0 20px rgba(251, 191, 36, 0.5);
+  --glow-calm: 0 0 20px rgba(56, 189, 248, 0.5);
+  --glow-anxious: 0 0 20px rgba(156, 163, 175, 0.4);
+  --glow-sad: 0 0 20px rgba(124, 58, 237, 0.5);
+  --glow-angry: 0 0 20px rgba(239, 68, 68, 0.5);
+  --glow-lost: 0 0 20px rgba(226, 232, 240, 0.4);
+  --glow-tired: 0 0 20px rgba(249, 115, 22, 0.5);
+  --glow-energetic: 0 0 20px rgba(34, 211, 238, 0.5);
+
+  /* Semantic */
+  --color-border: rgba(148, 163, 184, 0.15);
+  --color-border-active: rgba(56, 189, 248, 0.4);
+
+  /* ===== Typography ===== */
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif;
+
+  --text-xs: 0.625rem;    /* 10px */
+  --text-sm: 0.75rem;     /* 12px */
+  --text-base: 0.875rem;  /* 14px */
+  --text-lg: 1rem;        /* 16px */
+  --text-xl: 1.125rem;    /* 18px */
+  --text-2xl: 1.25rem;    /* 20px */
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ===== Spacing ===== */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* ===== Radius ===== */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* ===== Shadows ===== */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-card-hover: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-float: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* ===== Typography Classes ===== */
+.brand-heading {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+}
+
+.brand-subheading {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--leading-tight);
+  color: var(--color-text-primary);
+}
+
+.brand-body {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-normal);
+  color: var(--color-text-secondary);
+}
+
+.brand-caption {
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-tertiary);
+}
+
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4.3.1/dist/index.global.js"></script>
+    <script src="https://unpkg.com/lucide@1.8.0/dist/umd/lucide.min.js"></script>
+    <style type="text/tailwindcss">
+  @theme inline {
+    --color-background: var(--color-bg-primary);
+    --color-foreground: var(--color-text-primary);
+    --color-card: var(--color-bg-card);
+    --color-card-hover: var(--color-bg-card-hover);
+    --color-primary: var(--color-sky);
+    --color-primary-foreground: var(--color-text-inverse);
+    --color-secondary: var(--color-bg-secondary);
+    --color-secondary-foreground: var(--color-text-primary);
+    --color-muted: var(--color-bg-tertiary);
+    --color-muted-foreground: var(--color-text-secondary);
+    --color-accent: var(--color-purple);
+    --color-accent-foreground: var(--color-text-primary);
+    --color-border: var(--color-border);
+    --color-ring: var(--color-sky);
+    --radius-sm: var(--radius-sm);
+    --radius-md: var(--radius-md);
+    --radius-lg: var(--radius-lg);
+  }
+
+  @layer base {
+    body { background: var(--color-bg-primary); color: var(--color-text-primary); }
+    td, th { @apply break-words; word-break: break-all; word-break: auto-phrase; }
+    th { @apply whitespace-nowrap; }
+  }
+    </style>
+    <style>
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      [data-icon] {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+        background-color: currentColor;
+      }
+    </style>
+</head>
+<body class="min-h-screen font-sans antialiased">
+    <main class="relative w-full min-h-screen overflow-y-auto" style="background: var(--color-bg-primary);">
+        <!-- Top Header Bar -->
+        <header class="sticky top-0 z-30 flex items-center justify-between px-4 py-3" style="background: rgba(10, 14, 26, 0.6); backdrop-filter: blur(12px); border-bottom: 1px solid var(--color-border);">
+            <!-- Back button -->
+            <button class="w-9 h-9 flex items-center justify-center" style="color: var(--color-text-secondary);" aria-label="返回" data-dom-id="btn-back-home">
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="12 4 6 10 12 16"/>
+                </svg>
+            </button>
+            <!-- Title -->
+            <h1 class="text-base font-semibold tracking-tight" style="color: var(--color-text-primary); font-family: var(--font-family);">城市情绪天气</h1>
+            <!-- Search pill -->
+            <div class="flex items-center gap-1.5 px-3 py-1.5" style="background: rgba(148, 163, 184, 0.1); border: 1px solid var(--color-border); border-radius: var(--radius-full); min-width: 100px;">
+                <svg class="w-3.5 h-3.5 shrink-0" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-tertiary);">
+                    <circle cx="6" cy="6" r="4.5"/>
+                    <line x1="9.5" y1="9.5" x2="13" y2="13"/>
+                </svg>
+                <span class="text-xs" style="color: var(--color-text-tertiary); font-family: var(--font-family);">搜索城市</span>
+            </div>
+        </header>
+
+        <!-- Map Area (~45% of screen) -->
+        <section class="relative" style="height: 45vh; min-height: 320px;">
+            <img src="../assets/image_1_yi19x4.jpg" alt="中国情绪天气地图" class="w-full h-full object-cover"/>
+            <!-- Dark overlay for readability -->
+            <div class="absolute top-0 left-0 right-0 h-full" style="background: linear-gradient(to bottom, rgba(10,14,26,0.3), rgba(10,14,26,0.7));"></div>
+
+            <!-- City Markers Container -->
+            <div class="absolute top-0 left-0 right-0 h-full">
+                <!-- 北京 (sunny) - top north -->
+                <div class="city-marker" style="top: 18%; left: 62%; --marker-color: #fbbf24; --glow-color: rgba(251, 191, 36, 0.5); animation-duration: 2s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="4" r="3" stroke="#fbbf24" stroke-width="1"/>
+                        <line x1="6" y1="8" x2="6" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                        <line x1="2" y1="10" x2="10" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                    <span class="marker-label">北京</span>
+                </div>
+                <!-- 上海 (cloudy) - east coast -->
+                <div class="city-marker" style="top: 48%; left: 72%; --marker-color: #94a3b8; --glow-color: rgba(148, 163, 184, 0.4); animation-duration: 2.5s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 8c0-2 1.5-3.5 3-3.5S9 6 9 8" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+                        <path d="M1.5 8.5c0-1.5 1-2.5 2-2.5" stroke="#94a3b8" stroke-width="0.8" stroke-linecap="round" opacity="0.6"/>
+                    </svg>
+                    <span class="marker-label">上海</span>
+                </div>
+                <!-- 广州 (rain) - south -->
+                <div class="city-marker" style="top: 72%; left: 60%; --marker-color: #38bdf8; --glow-color: rgba(56, 189, 248, 0.5); animation-duration: 3s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 5c0-2 1.5-3 3-3s3 1 3 3" stroke="#38bdf8" stroke-width="1" stroke-linecap="round"/>
+                        <line x1="4" y1="7" x2="3.5" y2="10" stroke="#38bdf8" stroke-width="0.8" stroke-linecap="round"/>
+                        <line x1="6" y1="7" x2="5.5" y2="10.5" stroke="#38bdf8" stroke-width="0.8" stroke-linecap="round"/>
+                        <line x1="8" y1="7" x2="7.5" y2="10" stroke="#38bdf8" stroke-width="0.8" stroke-linecap="round"/>
+                    </svg>
+                    <span class="marker-label">广州</span>
+                </div>
+                <!-- 成都 (sunny) - west -->
+                <div class="city-marker" style="top: 52%; left: 32%; --marker-color: #fbbf24; --glow-color: rgba(251, 191, 36, 0.5); animation-duration: 2.8s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="4" r="3" stroke="#fbbf24" stroke-width="1"/>
+                        <line x1="6" y1="8" x2="6" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                        <line x1="2" y1="10" x2="10" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                    <span class="marker-label">成都</span>
+                </div>
+                <!-- 武汉 (thunder) - central -->
+                <div class="city-marker" style="top: 52%; left: 55%; --marker-color: #a78bfa; --glow-color: rgba(167, 139, 250, 0.5); animation-duration: 2.3s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 5c0-2 1.5-3 3-3s3 1 3 3" stroke="#a78bfa" stroke-width="1" stroke-linecap="round"/>
+                        <polyline points="5.5 7 4.5 9.5 6.5 9 5 12" stroke="#a78bfa" stroke-width="0.8" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="marker-label">武汉</span>
+                </div>
+                <!-- 杭州 (cloudy) - east -->
+                <div class="city-marker" style="top: 52%; left: 68%; --marker-color: #94a3b8; --glow-color: rgba(148, 163, 184, 0.4); animation-duration: 3.2s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <path d="M3 6c0-2 1.5-3 3-3s3 1 3 3" stroke="#94a3b8" stroke-width="1" stroke-linecap="round"/>
+                        <path d="M1.5 7c0-1.5 1-2.5 2-2.5" stroke="#94a3b8" stroke-width="0.8" stroke-linecap="round" opacity="0.6"/>
+                    </svg>
+                    <span class="marker-label">杭州</span>
+                </div>
+                <!-- 西安 (haze) - northwest -->
+                <div class="city-marker" style="top: 42%; left: 42%; --marker-color: #f472b6; --glow-color: rgba(244, 114, 182, 0.4); animation-duration: 2.6s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <path d="M2 6h8" stroke="#f472b6" stroke-width="0.8" stroke-linecap="round" opacity="0.5"/>
+                        <path d="M3 8h6" stroke="#f472b6" stroke-width="0.8" stroke-linecap="round" opacity="0.4"/>
+                        <path d="M4 4h4" stroke="#f472b6" stroke-width="0.8" stroke-linecap="round" opacity="0.3"/>
+                    </svg>
+                    <span class="marker-label">西安</span>
+                </div>
+                <!-- 深圳 (sunny) - south coast -->
+                <div class="city-marker" style="top: 76%; left: 62%; --marker-color: #fbbf24; --glow-color: rgba(251, 191, 36, 0.5); animation-duration: 3.5s;">
+                    <div class="marker-dot"></div>
+                    <svg class="marker-icon" viewBox="0 0 12 12" fill="none">
+                        <circle cx="6" cy="4" r="3" stroke="#fbbf24" stroke-width="1"/>
+                        <line x1="6" y1="8" x2="6" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                        <line x1="2" y1="10" x2="10" y2="10" stroke="#fbbf24" stroke-width="1" stroke-linecap="round"/>
+                    </svg>
+                    <span class="marker-label">深圳</span>
+                </div>
+            </div>
+
+            <!-- Gradient fade to card area -->
+            <div class="absolute bottom-0 left-0 right-0 h-16" style="background: linear-gradient(to top, var(--color-bg-primary), transparent);"></div>
+        </section>
+
+        <!-- City Detail Card (~25% of screen) -->
+        <section class="px-4 -mt-6 relative z-10 pb-24">
+            <div class="city-detail-card p-4" style="background: rgba(10, 14, 26, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(56, 189, 248, 0.2); border-radius: var(--radius-lg);">
+                <!-- Card Header: icon + city name + weather + emotion score -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <!-- Sun+cloud weather icon 28px -->
+                        <svg class="w-7 h-7 shrink-0" viewBox="0 0 28 28" fill="none">
+                            <circle cx="12" cy="12" r="5" stroke="#fbbf24" stroke-width="1.5"/>
+                            <line x1="12" y1="2" x2="12" y2="5" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="12" y1="19" x2="12" y2="22" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="3" y1="12" x2="6" y2="12" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="18" y1="12" x2="21" y2="12" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="5.6" y1="5.6" x2="7.7" y2="7.7" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="16.3" y1="16.3" x2="18.4" y2="18.4" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="5.6" y1="18.4" x2="7.7" y2="16.3" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="16.3" y1="7.7" x2="18.4" y2="5.6" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M16 18c0-2 1.5-3.5 3-3.5s3 1.5 3 3.5" stroke="#94a3b8" stroke-width="1.2" stroke-linecap="round"/>
+                        </svg>
+                        <div>
+                            <h2 class="text-sm font-semibold" style="color: var(--color-text-primary); font-family: var(--font-family);">北京</h2>
+                            <p class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-family);">晴间多云</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-sm font-semibold" style="color: var(--color-sky); font-family: var(--font-family);">开心指数 72%</p>
+                    </div>
+                </div>
+
+                <!-- Emotion Distribution: Donut Ring Chart -->
+                <div class="flex items-center gap-4 mb-3">
+                    <!-- SVG Ring Chart -->
+                    <div class="shrink-0 relative" style="width: 64px; height: 64px;">
+                        <svg viewBox="0 0 36 36" class="w-full h-full" style="transform: rotate(-90deg);">
+                            <!-- Background track -->
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(148,163,184,0.1)" stroke-width="4"/>
+                            <!-- 开心 45% = 162deg -->
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#fbbf24" stroke-width="4" stroke-dasharray="39.6 88" stroke-dashoffset="0" stroke-linecap="round"/>
+                            <!-- 平静 30% = 108deg -->
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#38bdf8" stroke-width="4" stroke-dasharray="26.4 88" stroke-dashoffset="-39.6" stroke-linecap="round"/>
+                            <!-- 焦虑 15% = 54deg -->
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#9ca3af" stroke-width="4" stroke-dasharray="13.2 88" stroke-dashoffset="-66" stroke-linecap="round"/>
+                            <!-- 其他 10% = 36deg -->
+                            <circle cx="18" cy="18" r="14" fill="none" stroke="#a78bfa" stroke-width="4" stroke-dasharray="8.8 88" stroke-dashoffset="-79.2" stroke-linecap="round"/>
+                        </svg>
+                        <!-- Center label -->
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-sm font-bold" style="color: var(--color-text-primary); font-family: var(--font-family); font-variant-numeric: tabular-nums;">72%</span>
+                        </div>
+                    </div>
+                    <!-- Legend -->
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full shrink-0" style="background: #fbbf24;"></span>
+                            <span class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-family);">开心 45%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full shrink-0" style="background: #38bdf8;"></span>
+                            <span class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-family);">平静 30%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full shrink-0" style="background: #9ca3af;"></span>
+                            <span class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-family);">焦虑 15%</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="inline-block w-2 h-2 rounded-full shrink-0" style="background: #a78bfa;"></span>
+                            <span class="text-xs" style="color: var(--color-text-secondary); font-family: var(--font-family);">其他 10%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <p class="text-xs leading-relaxed" style="color: var(--color-text-tertiary); font-family: var(--font-family);">今天的北京是个温暖的晴天，市民情绪以开心为主。</p>
+            </div>
+        </section>
+
+        <!-- Bottom Tab Bar -->
+        <nav class="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-around px-2" style="height: 60px; background: rgba(10, 14, 26, 0.85); backdrop-filter: blur(16px); border-top: 1px solid rgba(148, 163, 184, 0.1);">
+            <!-- Tab 1: 个人天空 -->
+            <button class="flex flex-col items-center justify-center gap-0.5 px-3 py-1 tab-btn" data-dom-id="tab-personal-sky" aria-label="个人天空">
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 2C6 2 3 6 3 9c0 3 2 5 4 6l1 1h4l1-1c2-1 4-3 4-6 0-3-3-7-7-7z"/>
+                    <circle cx="7" cy="8" r="0.8"/>
+                    <circle cx="13" cy="8" r="0.8"/>
+                    <path d="M7.5 11c0.5 0.8 1.5 1.2 2.5 1.2s2-0.4 2.5-1.2"/>
+                </svg>
+                <span class="text-xs font-medium tab-label" style="color: var(--color-text-tertiary); font-family: var(--font-family);">个人天空</span>
+                <div class="tab-underline"></div>
+            </button>
+            <!-- Tab 2: 城市地图 (Active) -->
+            <button class="flex flex-col items-center justify-center gap-0.5 px-3 py-1 tab-btn active" aria-label="城市地图">
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor" stroke="none">
+                    <path d="M2 6l4-2 4 2 4-2 4 2v8l-4 2-4-2-4 2-4-2z" opacity="0.9"/>
+                    <line x1="6" y1="4" x2="6" y2="12" stroke="var(--color-bg-primary)" stroke-width="1" stroke-linecap="round"/>
+                    <line x1="10" y1="6" x2="10" y2="14" stroke="var(--color-bg-primary)" stroke-width="1" stroke-linecap="round"/>
+                    <line x1="14" y1="4" x2="14" y2="12" stroke="var(--color-bg-primary)" stroke-width="1" stroke-linecap="round"/>
+                </svg>
+                <span class="text-xs font-medium tab-label" style="color: var(--color-sky); font-family: var(--font-family);">城市地图</span>
+                <div class="tab-underline" style="background: var(--color-sky);"></div>
+            </button>
+            <!-- Tab 3: 情绪趋势 -->
+            <button class="flex flex-col items-center justify-center gap-0.5 px-3 py-1 tab-btn" data-dom-id="tab-emotion-trend" aria-label="情绪趋势">
+                <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="2 14 6 10 10 12 14 6 18 8"/>
+                    <polyline points="14 4 18 8 14 8"/>
+                </svg>
+                <span class="text-xs font-medium tab-label" style="color: var(--color-text-tertiary); font-family: var(--font-family);">情绪趋势</span>
+                <div class="tab-underline"></div>
+            </button>
+        </nav>
+    </main>
+
+    <!-- Custom CSS Animations -->
+    <style>
+        /* City marker breathing pulse */
+        .city-marker {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            pointer-events: none;
+            animation: markerPulse ease-in-out infinite;
+        }
+
+        .marker-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 9999px;
+            background: var(--marker-color);
+            box-shadow: 0 0 8px var(--glow-color), 0 0 16px var(--glow-color);
+            animation: dotBreath ease-in-out infinite;
+            animation-duration: inherit;
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        @keyframes dotBreath {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .marker-icon {
+            width: 12px;
+            height: 12px;
+            flex-shrink: 0;
+        }
+
+        .marker-label {
+            font-size: 10px;
+            font-family: var(--font-family);
+            font-weight: 500;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+        }
+
+        /* City detail card gradient border animation */
+        .city-detail-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .city-detail-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--color-sky), var(--color-purple), var(--color-sky));
+            background-size: 200% 100%;
+            animation: borderShift 4s ease-in-out infinite;
+        }
+
+        @keyframes borderShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Tab underline indicator */
+        .tab-underline {
+            width: 0;
+            height: 2px;
+            border-radius: 1px;
+            transition: width 240ms cubic-bezier(.3,0,0,1);
+        }
+
+        .tab-btn.active .tab-underline {
+            width: 16px;
+            box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            .city-marker,
+            .marker-dot,
+            .city-detail-card::before {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+            }
+            .tab-underline {
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
